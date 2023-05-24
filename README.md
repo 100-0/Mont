@@ -1,11 +1,11 @@
 # Mont
 2023 프로젝트 종합설계 - Mont
 
-git init
-git commit -m "커밋명"
-git branch -M 브랜치명
-git remote add origin https://github.com/100-0/Mont.git
-git push -u origin 브랜치명
+git init<br>
+git commit -m "커밋명"<br>
+git branch -M 브랜치명<br>
+git remote add origin https://github.com/100-0/Mont.git<br>
+git push -u origin 브랜치명<br>
 
 ### git convention
 ----
