@@ -1,34 +1,52 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Face Detection</title>
-        <style>
-            .red { color: red; }
-            .green { color: green; }
-            .black { color: black; }
-            .blue { color: blue; }
-            .orange { color: orange; }
-            .gray { color: gray; }
-        </style>
-    </head>
-<body>
+  <head>
+    <title>Face Detection</title>
+    <style>
+      .red {
+        color: red;
+      }
+      .green {
+        color: green;
+      }
+      .black {
+        color: black;
+      }
+      .blue {
+        color: blue;
+      }
+      .orange {
+        color: orange;
+      }
+      .gray {
+        color: gray;
+      }
+    </style>
+  </head>
+  <body>
     <h1>Face Detection</h1>
 
     <form action="/" method="POST" enctype="multipart/form-data">
-        <input type="file" name="image" accept="image/*" required>
-        <button type="submit">Upload</button>
+      <input type="file" name="image" accept="image/*" required />
+      <button type="submit">Upload</button>
     </form>
 
     {% if result %}
     <h2>Face Detection Result:</h2>
-    <img src="{{ result['image_path'] }}" alt="Uploaded Image">
+    <img src="{{ result['image_path'] }}" alt="Uploaded Image" />
     <p>Gender: {{ result['gender'] }} ({{ result['gender_confidence'] }})</p>
     <p>Emotion: {{ result['emotion'] }} ({{ result['emotion_confidence'] }})</p>
     <p>Age: {{ result['age'] }} ({{ result['age_confidence'] }})</p>
-    
+
     {% set emotion_color = get_emotion_color(result['emotion']) %}
-    <p>Emotion Color: <span class="{{ emotion_color }}">{{ emotion_color }}</span></p>
-    
+    <p>
+      Emotion Color:
+      <span class="{{ emotion_color }}">{{ emotion_color }}</span>
+    </p>
+
     {% endif %}
-</body>
+    <div>
+      <button onclick="window.location.href='/classify'">추천 받기</button>
+    </div>
+  </body>
 </html>

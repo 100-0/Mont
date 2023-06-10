@@ -57,6 +57,10 @@ def home():
 
     return render_template('Mont.html', get_emotion_color=get_emotion_color)
 
+@app.route('/classify')
+def classify():
+    return render_template('classify.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
