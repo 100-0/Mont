@@ -4,44 +4,43 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <style>
+      #previewImage {
+        width: 400px;
+      }
+    </style>
   </head>
-  <body>
+  <body onload="init()">
+    <!-- 티처블머신 모델 html 파일 들어오면 바로 로드 -->
+    <!-- 모델 로딩 시간 고려해서, 새로고침 후 바로 업로드 추천받기하면 오류 발생함 -->
     <div>Teachable Machine Image Model</div>
-    <!--
-    <form method="post" enctype="multipart/form-data">
-      <div class="button">
-        <label for="chooseFile"> 👉 CLICK HERE! 👈 </label>
-      </div>
-      <input
-        type="file"
-        id="chooseFile"
-        name="chooseFile"
-        accept="image/*"
-        onchange="loadFile(this)"
-      />
-    </form>-->
-    <input type="file" id="inputImage" />
-    <button id="sendButton">보내기</button>
-    <img src="" class="uploadImage" />
-
-    <button type="button" onclick="init()">Start</button>
-    <div id="webcam-container"></div>
+    <div class="art_upload">
+      <input type="file" id="uploadImage" accept="image/*" />
+      <button type="button" id="sendButton" onclick="predict()">
+        추천받기
+      </button>
+      <img src="" id="previewImage" />
+    </div>
+    <!--<button type="button" onclick="init()">시작</button>-->
     <div id="label-container"></div>
-    <script>
-      document.querySelector("#sendButton").addEventListener("click", () => {
-        let selectFile = document.querySelector("#inputImage").files[0];
+    <p id="result"></p>
 
-        const file = URL.createObjectURL(selectFile);
-
-        document.querySelector(".uploadImage").src = file;
-      });
-    </script>
+    <!-- JQery for AJAX-->
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
     <script type="text/javascript">
       const URL = "https://teachablemachine.withgoogle.com/models/fV8IxNv7p/";
 
-      let model, webcam, labelContainer, maxPredictions;
+      const uploadFile = document.querySelector("#uploadImage");
+      const uploadPreview = document.querySelector("#previewImage");
+
+      uploadFile.addEventListener("change", () => {
+        const imageSrc = webkitURL.createObjectURL(uploadFile.files[0]);
+        uploadPreview.src = imageSrc;
+      });
+
+      let model, labelContainer, maxPredictions;
 
       // Load the image model and setup the webcam
       async function init() {
@@ -55,39 +54,46 @@
         model = await tmImage.load(modelURL, metadataURL);
         maxPredictions = model.getTotalClasses();
 
-        // Convenience function to setup a webcam
-        const flip = true; // whether to flip the webcam
-        webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
-        await webcam.setup(); // request access to the webcam
-        await webcam.play();
-        window.requestAnimationFrame(loop);
-
         // append elements to the DOM
-        document.getElementById("webcam-container").appendChild(webcam.canvas);
         labelContainer = document.getElementById("label-container");
         for (let i = 0; i < maxPredictions; i++) {
           // and class labels
           labelContainer.appendChild(document.createElement("div"));
         }
       }
-
-      async function loop() {
-        webcam.update(); // update the webcam frame
-        await predict();
-        window.requestAnimationFrame(loop);
-      }
-
       // run the webcam image through the image model
       async function predict() {
+        var image = document.getElementById("previewImage");
         // predict can take in an image, video or canvas html element
-        const prediction = await model.predict(webcam.canvas);
+        const prediction = await model.predict(image, false);
+
+        let maxProb = 0;
+        let genreLabel = "";
         for (let i = 0; i < maxPredictions; i++) {
           const classPrediction =
             prediction[i].className +
             ": " +
             prediction[i].probability.toFixed(2);
-          labelContainer.childNodes[i].innerHTML = classPrediction;
+          if (prediction[i].probability > maxProb) {
+            maxProb = prediction[i].probability;
+            genreLabel = prediction[i].className;
+          }
         }
+        /* genreLabel 잘 뜨는지 확인용
+        console.log(genreLabel); */
+        const genreData = {};
+        $.ajax({
+          type: "POST",
+          url: "http://127.0.0.1:5000/recommend",
+          data: JSON.stringfy(word),
+          dataType: "JSON",
+          success: function (result) {
+            $(".about--banner").append(result);
+          },
+          error: function (xtr, status, error) {
+            alert(xtr + ":" + status + ":" + error);
+          },
+        });
       }
     </script>
   </body>
