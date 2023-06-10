@@ -9,26 +9,43 @@
         width: 400px;
       }
       #sendButton {
-        background-color: yellow;
+        background-color: rgb(251, 216, 77);
+        padding: 10px 18px;
         border: none;
+        font-size: 18px;
+        border-radius: 12px;
+      }
+      #uploadImage {
+        display: block;
+      }
+      #classify_section {
+        padding-top: 50px;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      #art_upload {
+        display: flex;
+        flex-direction: column;
       }
     </style>
   </head>
   <body onload="init()">
     <!-- 티처블머신 모델 html 파일 들어오면 바로 로드 -->
     <!-- 모델 로딩 시간 고려해서, 새로고침 후 바로 업로드 추천받기하면 오류 발생함 -->
-    <div>Teachable Machine Image Model</div>
-    <div class="art_upload">
-      <input type="file" id="uploadImage" accept="image/*" />
+    <section id="classify_section">
+      <h1>선호하는 그림을 업로드해주세요</h1>
+      <div class="art_upload">
+        <input type="file" id="uploadImage" accept="image/*" />
+        <img src="" id="previewImage" />
+      </div>
       <button type="button" id="sendButton" onclick="predict()">
         추천받기
       </button>
-      <img src="" id="previewImage" />
-    </div>
-    <!--<button type="button" onclick="init()">시작</button>-->
-    <div id="label-container"></div>
-    <p id="result"></p>
-
+      <!--<button type="button" onclick="init()">시작</button>-->
+      <div id="label-container"></div>
+    </section>
     <!-- JQery for AJAX-->
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
