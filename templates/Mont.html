@@ -46,7 +46,12 @@
 
     {% endif %}
     <div>
-      <button onclick="window.location.href='/classify'">추천 받기</button>
+      <!-- 감정 색 html로 전달하는거 url args 로 전달했어요 -->
+      <button
+        onclick="window.location.href='/classify?emotion=' + encodeURIComponent(`{{ emotion_color }}`)"
+      >
+        추천 받기
+      </button>
     </div>
   </body>
 </html>

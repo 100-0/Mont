@@ -97,17 +97,20 @@
           }
         }
         var genreData = genreLabel;
-        var genreValue = { genreData: genreData };
 
-        // recommend.html로 그림 장르 데이터 보내기
+        var urlParams = new URLSearchParams(location.search);
+        var emotionData = urlParams.get("emotion");
+        var genreValue = { genreData: genreData, emotionData: emotionData };
+
+        // result.html로 그림 장르 데이터 보내기
         $.ajax({
           type: "POST",
-          url: "/recommend",
+          url: "/result",
           data: JSON.stringify(genreValue),
           contentType: "application/json",
           success: function (result) {
             console.log("Success");
-            window.location.href = "/recommend";
+            window.location.href = "/result";
           },
           error: function (xhr, status, error) {
             console.log(xhr + ":" + status + ":" + error);

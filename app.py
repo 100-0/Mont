@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, session
+from flask import Flask, render_template, jsonify, request, session, redirect
 import os
 import requests
 import json
@@ -60,28 +60,22 @@ def home():
 
     return render_template('Mont.html', get_emotion_color=get_emotion_color)
 
-@app.route('/classify')
+@app.route('/classify', methods=['GET', 'POST'])
 def classify():
     return render_template('classify.html')
 
-# @app.route('/recommend', methods=['POST', 'GET'])
-# def recommend():
-#     if request.method == 'POST':
-#         genreData = request.json['genreData']
-#         return jsonify({'genreData': genreData})
-#     elif request.method == 'GET':
-#         genreData = request.args.get('genreData')
-#         return render_template('recommend.html', genreData=genreData)
-
-@app.route('/recommend', methods=['POST', 'GET'])
-def recommend():
+@app.route('/result', methods=['POST', 'GET'])
+def result():
     if request.method == 'POST':
         genreData = request.json['genreData']
+        emotionData = request.json['emotionData']
         session['genreData'] = genreData
-        return 'Success'
+        session['emotionData'] = emotionData
+        return redirect('/result')
     elif request.method == 'GET':
         genreData = session.get('genreData')
-        return render_template('recommend.html', genreData=genreData)
+        emotionData = session.get('emotionData')
+        return render_template('result.html', genreData=genreData, emotionData=emotionData)
 
 
 if __name__ == '__main__':
