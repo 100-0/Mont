@@ -11,6 +11,10 @@
         font-size: 18px;
         border-radius: 12px;
       }
+      #face_img {
+        width: 300px;
+      }
+
       .red {
         color: red;
       }
@@ -41,7 +45,7 @@
 
     {% if result %}
     <h2>Face Detection Result:</h2>
-    <img src="{{ result['image_path'] }}" alt="Uploaded Image" />
+    <img id="face_img" src="{{ result['image_path'] }}" alt="Uploaded Image" />
     <p>Gender: {{ result['gender'] }} ({{ result['gender_confidence'] }})</p>
     <p>Emotion: {{ result['emotion'] }} ({{ result['emotion_confidence'] }})</p>
     <p>Age: {{ result['age'] }} ({{ result['age_confidence'] }})</p>
@@ -53,7 +57,10 @@
     </p>
 
     {% endif %}
+
     <div>
+      <!-- 얼굴 업로드해서 감정 색 있는 경우 버튼 생성 -->
+      {% if emotion_color %}
       <!-- 감정 색 html로 전달하는거 url args 로 전달했어요 -->
       <button
         id="toClassify"
@@ -61,6 +68,7 @@
       >
         추천 받기
       </button>
+      {% endif %}
     </div>
   </body>
 </html>
