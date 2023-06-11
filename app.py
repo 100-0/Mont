@@ -3,7 +3,7 @@ import os
 import requests
 import json
 import logging
-
+import random
 
 app = Flask(__name__)
 app.logger.setLevel(logging.DEBUG)
@@ -75,7 +75,19 @@ def result():
     elif request.method == 'GET':
         genreData = session.get('genreData')
         emotionData = session.get('emotionData')
-        return render_template('result.html', genreData=genreData, emotionData=emotionData)
+
+        # 이미지 파일 경로 설정
+        image_folder = os.path.join('static', 'color_img', emotionData, genreData)
+        image_files = os.listdir(image_folder)
+
+        # 랜덤으로 이미지 5개 선택
+        if len(image_files) > 5:
+            random_images = random.sample(image_files, 5)
+        else:
+            random_images = image_files
+
+        return render_template('result.html', genreData=genreData, emotionData=emotionData, images=random_images)
+
 
 
 if __name__ == '__main__':

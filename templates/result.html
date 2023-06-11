@@ -2,10 +2,37 @@
 <html>
   <head>
     <title>Result</title>
+    <style>
+      img {
+        width: 300px;
+      }
+      button {
+        background-color: rgb(251, 216, 77);
+        padding: 10px 18px;
+        border: none;
+        font-size: 18px;
+        border-radius: 12px;
+      }
+    </style>
   </head>
   <body>
-    <h1>Recommendation Page</h1>
-    <p>{{ genreData }}</p>
-    <p>{{ emotionData }}</p>
+    <h1>추천 결과</h1>
+    <p>Emotion: {{ emotionData }}</p>
+    <!-- 몰랐는데 모델 완료하고 보니까 neoplasticism 오타가 있어서 -->
+    {% if genreData == 'neopolasticism' %}
+    <p>Genre: neoplasticism</p>
+    {% else %}
+    <p>Genre: {{ genreData }}</p>
+    {% endif %}
+    <!-- 버튼 클릭 - 새로고침(리로드) - 재추천 -->
+    <button onClick="window.location.reload()">재추천</button>
+    <div id="result_img_container">
+      {% for image in images %}
+      <img
+        src="{{ url_for('static', filename='color_img/' + emotionData + '/' + genreData + '/' + image) }}"
+        alt="Image"
+      />
+      {% endfor %}
+    </div>
   </body>
 </html>
