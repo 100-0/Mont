@@ -23,13 +23,12 @@ def get_emotion_color(emotion):
         'neutral': 'black',
         'sad': 'blue',
         'smile': 'orange',
-        'laugh': 'orange'
+        'laugh': 'orange',
+        'talking': 'black',
+        'disgust': 'black',
+        'surprise': 'black'
     }
-    other_color = 'gray'  # 기타 감정에 대한 색상
-    if emotion.lower() in colors:
-        return colors[emotion.lower()]
-    else:
-        return other_color
+    return colors.get(emotion.lower(), '')
 
 
 @app.route('/', methods=['GET', 'POST'])
