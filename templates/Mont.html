@@ -3,6 +3,7 @@
   <head>
     <title>Face Detection</title>
     <style>
+        /* CSS 스타일 */
       #toClassify {
         margin-top: 20px;
         background-color: rgb(251, 216, 77);
@@ -15,6 +16,7 @@
         width: 300px;
       }
 
+       /* 감정에 따른 색상 클래스 */
       .red {
         color: red;
       }
@@ -35,19 +37,22 @@
   <body>
     <h1>Face Detection</h1>
 
+     <!-- 이미지 업로드를 위한 폼 -->
     <form action="/" method="POST" enctype="multipart/form-data">
       <input type="file" name="image" accept="image/*" required />
       <button type="submit">Upload</button>
     </form>
 
+     <!--  얼굴 인식 결과를 출력, 결과가 있을 경우에만 출력 -->
     {% if result %}
-    <h2>Face Detection Result:</h2>
+    <h2>Face Detection Result:</h2><!--성별, 감정, 나이 등의 정보를 출력-->
     <img id="face_img" src="{{ result['image_path'] }}" alt="Uploaded Image" />
     <p>Gender: {{ result['gender'] }} ({{ result['gender_confidence'] }})</p>
     <p>Emotion: {{ result['emotion'] }} ({{ result['emotion_confidence'] }})</p>
     <p>Age: {{ result['age'] }} ({{ result['age_confidence'] }})</p>
 
-    {% set emotion_color = get_emotion_color(result['emotion']) %}
+    <!--get_emotion_color 함수를 호출하여 감정에 따른 색상을 얻어온 후, emotion_color 변수에 저장-->
+    {% set emotion_color = get_emotion_color(result['emotion']) %} 
     <p>
       Emotion Color:
       <span class="{{ emotion_color }}">{{ emotion_color }}</span>

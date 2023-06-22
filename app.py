@@ -11,12 +11,13 @@ app.logger.setLevel(logging.DEBUG)
 # ajax에서 세션 사용을 위한 key
 app.secret_key = 'your_secret_key'
 
+#Naver 얼굴인식 API를 사용하기 위한 클라이언트 ID와 클라이언트 시크릿을 설정
 client_id = "ktL2HwT47eMq6TspNPlP"
 client_secret = "TXUzwIGInL"
 # naver 얼굴인식 api
 url = "https://openapi.naver.com/v1/vision/face"
 
-
+# 감정에 따른 색상을 반환하는 함수
 def get_emotion_color(emotion):
     colors = {
         'angry': 'red',
@@ -31,10 +32,11 @@ def get_emotion_color(emotion):
     }
     return colors.get(emotion.lower(), '')
 
-
+#루트 경로('/')로 접속했을 때의 동작을 정의하는 뷰 함수
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
+         # POST 요청일 경우 이미지 파일을 받아 처리
         image = request.files['image']
         image_path = os.path.join('static', image.filename)
         image.save(image_path)
@@ -46,6 +48,7 @@ def home():
         result = {}
 
         if rescode == 200:
+            # 얼굴인식 결과를 파싱하여 필요한 정보를 추출
             detect_result = json.loads(response.text)
             detect_summary = detect_result['faces'][0]
             result['image_path'] = image_path
@@ -56,9 +59,9 @@ def home():
             result['age'] = detect_summary['age']['value']
             result['age_confidence'] = detect_summary['age']['confidence']
 
-        return render_template('Mont.html', result=result, get_emotion_color=get_emotion_color)
+        return render_template('Mont.html', result=result, get_emotion_color=get_emotion_color)  # 결과를 Mont.html 템플릿에 전달하여 렌더링
 
-    return render_template('Mont.html', get_emotion_color=get_emotion_color)
+    return render_template('Mont.html', get_emotion_color=get_emotion_color)# GET 요청일 경우 Mont.html 템플릿을 렌더링
 
 # classify.html 페이지 이동
 @app.route('/classify', methods=['GET', 'POST'])
