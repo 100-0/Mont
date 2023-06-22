@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Classify</title>
     <style>
       #previewImage {
         width: 400px;
@@ -31,28 +31,32 @@
       }
     </style>
   </head>
+  <!-- 티처블머신 모델 html 파일 들어오면 바로 로드 -->
   <body onload="init()">
-    <!-- 티처블머신 모델 html 파일 들어오면 바로 로드 -->
-    <!-- 모델 로딩 시간 고려해서, 새로고침 후 바로 업로드 추천받기하면 오류 발생함 -->
     <section id="classify_section">
       <h1>선호하는 그림을 업로드해주세요</h1>
+      <!-- 사용자 이미지 업로드 입력 폼 -->
       <div class="art_upload">
         <input type="file" id="uploadImage" accept="image/*" />
+        <!-- 업로드 이미지 보여주는 부분 -->
         <img src="" id="previewImage" />
       </div>
+      <!-- 버튼을 눌러서 티처블머신 예술 양식 예측-->
       <button type="button" id="sendButton" onclick="predict()">
         추천받기
       </button>
-      <!--<button type="button" onclick="init()">시작</button>-->
+      <!-- 분류된 예술 양식 label -->
       <div id="label-container"></div>
     </section>
     <!-- JQery for AJAX-->
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <!-- 티처블머신 연동을 위한 스크립트 -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
     <script type="text/javascript">
       const URL = "https://teachablemachine.withgoogle.com/models/fV8IxNv7p/";
 
+      // 업로드한 이미지를 화면 상에 보여주는 부분
       const uploadFile = document.querySelector("#uploadImage");
       const uploadPreview = document.querySelector("#previewImage");
 
@@ -61,9 +65,10 @@
         uploadPreview.src = imageSrc;
       });
 
+      // 티처블머신 tensorflow.js 부분
       let model, labelContainer, maxPredictions;
 
-      // Load the image model and setup the webcam
+      // 모델을 불러오는 부분
       async function init() {
         const modelURL = URL + "model.json";
         const metadataURL = URL + "metadata.json";
@@ -78,14 +83,16 @@
           labelContainer.appendChild(document.createElement("div"));
         }
       }
-      // run the webcam image through the image model
+      // run the image through the image model
+      // 티처블머신 모델로 예측하고 예술양식을 분류하는 부분
       async function predict() {
+        // 웹캠 대신 사용자가 업로드한 previewimage를 가져옴
         var image = document.getElementById("previewImage");
-        // predict can take in an image, video or canvas html element
         const prediction = await model.predict(image, false);
 
         let maxProb = 0;
         let genreLabel = "";
+        // 가장 높은 예측의 label을 결과로 보여줌
         for (let i = 0; i < maxPredictions; i++) {
           const classPrediction =
             prediction[i].className +
@@ -96,42 +103,30 @@
             genreLabel = prediction[i].className;
           }
         }
-        var genreData = genreLabel;
 
+        // 위에서 예측의 결과로 얻어낸 예술양식 라벨을 genreData에 저장
+        var genreData = genreLabel;
+        // url parameter로 전달한 감정의 색상을 emotionData에 저장
         var urlParams = new URLSearchParams(location.search);
         var emotionData = urlParams.get("emotion");
+        // 서버로 genreData와 emotionData를 json sessoin으로 전달하기 위해 genreValue에 담음
         var genreValue = { genreData: genreData, emotionData: emotionData };
 
-        // result.html로 그림 장르 데이터 보내기
+        // result.html로 genreValue(예술 양식 및 감정 색 데이터) 보내기위한 ajax
+        // app.py에서 세션으로 받고 result.html에 전달한다
+        // 성공시, result.html 페이지로 이동 & 실패시, 에러 출력
         $.ajax({
           type: "POST",
           url: "/result",
           data: JSON.stringify(genreValue),
           contentType: "application/json",
           success: function (result) {
-            console.log("Success");
             window.location.href = "/result";
           },
           error: function (xhr, status, error) {
             console.log(xhr + ":" + status + ":" + error);
           },
         });
-        /*
-        $.ajax({
-          type: "POST",
-          url: "/recommend",
-          data: JSON.stringify(genreValue),
-          contentType: "application/json",
-          success: function (result) {
-            console.log("성공");
-            console.log(genreValue);
-            window.location.href =
-              "/recommend?genreData=" + encodeURIComponent(genreData);
-          },
-          error: function (xtr, status, error) {
-            alert(xtr + ":" + status + ":" + error);
-          },
-        });*/
       }
     </script>
   </body>

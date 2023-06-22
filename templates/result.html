@@ -17,18 +17,23 @@
   </head>
   <body>
     <h1>추천 결과</h1>
+    <!-- 서버에서 전달받은 emotionData로 감정 색상을 화면에 표시 -->
     <p>Emotion: {{ emotionData }}</p>
-    <!-- 몰랐는데 모델 완료하고 보니까 neoplasticism 오타가 있어서 -->
+    <!-- 모델 자체에 neoplasticism이 neopolasticism으로 라벨링 오류가 있어서 수정 -->
     {% if genreData == 'neopolasticism' %}
     <p>Genre: neoplasticism</p>
     {% else %}
+    <!-- 서버에서 전달받은 예술 양식 데이터를 화면에 표시 -->
     <p>Genre: {{ genreData }}</p>
     {% endif %}
     <!-- 버튼 클릭 - 새로고침(리로드) - 재추천 -->
     <button onClick="window.location.reload()">재추천</button>
+    <!-- 버튼 클릭 - 처음 index 페이지로 돌아감 -->
     <button onClick="window.location.href='/'">처음으로</button>
+    <!-- 추천 이미지를 최대 5장을 화면에 띄어줌 -->
     <div id="result_img_container">
       {% for image in images %}
+      <!-- color_img/emotionData/genreData 경로에서 해당하는 색상과 예술 양식에 따른 이미지를 불러옴-->
       <img
         src="{{ url_for('static', filename='color_img/' + emotionData + '/' + genreData + '/' + image) }}"
         alt="Image"

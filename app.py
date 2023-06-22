@@ -8,11 +8,12 @@ import random
 app = Flask(__name__)
 app.logger.setLevel(logging.DEBUG)
 
-# ajax에서 세션 사용
+# ajax에서 세션 사용을 위한 key
 app.secret_key = 'your_secret_key'
 
 client_id = "ktL2HwT47eMq6TspNPlP"
 client_secret = "TXUzwIGInL"
+# naver 얼굴인식 api
 url = "https://openapi.naver.com/v1/vision/face"
 
 
@@ -60,32 +61,37 @@ def home():
 
     return render_template('Mont.html', get_emotion_color=get_emotion_color)
 
+# classify.html 페이지 이동
 @app.route('/classify', methods=['GET', 'POST'])
 def classify():
     return render_template('classify.html')
 
+# result.html 페이지
 @app.route('/result', methods=['POST', 'GET'])
 def result():
+    # POST : genreData와 emotionData 요청 (session으로)
     if request.method == 'POST':
         genreData = request.json['genreData']
         emotionData = request.json['emotionData']
         session['genreData'] = genreData
         session['emotionData'] = emotionData
         return redirect('/result')
+    # GET : session으로 받아낸 genreData와 emotionData의 값 가져옴
     elif request.method == 'GET':
         genreData = session.get('genreData')
         emotionData = session.get('emotionData')
 
-        # 이미지 파일 경로 설정
+        # 이미지 파일 경로 설정 static/color_img/emotionData/genreData
         image_folder = os.path.join('static', 'color_img', emotionData, genreData)
         image_files = os.listdir(image_folder)
 
         # 랜덤으로 이미지 5개 선택
+        # 추천할 이미지가 5개보다 적다면, 그 만큼을 추천해주기
         if len(image_files) > 5:
             random_images = random.sample(image_files, 5)
         else:
             random_images = image_files
-
+        # GET 이라면, result.html에 genreData와 emotionDat와 추천해줄 이미지를 전달
         return render_template('result.html', genreData=genreData, emotionData=emotionData, images=random_images)
 
 

@@ -61,7 +61,7 @@
     <div>
       <!-- 얼굴 업로드해서 감정 색 있는 경우 버튼 생성 -->
       {% if emotion_color %}
-      <!-- 감정 색 html로 전달하는거 url args 로 전달했어요 -->
+      <!-- 감정 색 데이터: url args로 classify.html에 전달 -->
       <button
         id="toClassify"
         onclick="window.location.href='/classify?emotion=' + encodeURIComponent(`{{ emotion_color }}`)"
